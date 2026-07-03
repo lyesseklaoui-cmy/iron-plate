@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IRON PLATE</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#242526">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --concrete:#242526;
+    --concrete-2:#2f3031;
+    --chalk:#EDEAE3;
+    --chalk-dim:#a8a6a0;
+    --iron:#4A5259;
+    --hazard:#F2C230;
+    --hazard-dim:#8a7220;
+    --danger:#E14B3C;
+    --ok:#5FA777;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--concrete);
+    color:var(--chalk);
+    font-family:'Oswald', sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  .noise{
+    position:fixed; inset:0; pointer-events:none; opacity:.035; z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  header{
+    padding:28px 20px 18px;
+    border-bottom:3px solid var(--hazard);
+    position:relative;
+    z-index:1;
+  }
+  .plate-num{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--hazard);
+    font-size:12px;
+    letter-spacing:3px;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:44px;
+    letter-spacing:2px;
+    line-height:0.9;
+  }
+  .sub{
+    color:var(--chalk-dim);
+    font-size:13px;
+    margin-top:6px;
+    letter-spacing:0.5px;
+  }
+
+  nav{
+    display:flex;
+    overflow-x:auto;
+    background:var(--concrete-2);
+    border-bottom:1px solid var(--iron);
+    position:sticky; top:0; z-index:5;
+    -webkit-overflow-scrolling:touch;
+  }
+  nav button{
+    flex:0 0 auto;
+    background:none;
+    border:none;
+    color:var(--chalk-dim);
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:1px;
+    padding:14px 16px;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  nav button.active{
+    color:var(--hazard);
+    border-bottom:3px solid var(--hazard);
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:20px 16px;
+    position:relative; z-index:1;
+  }
+
+  .day-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    padding:4px 10px;
+    border:1px solid var(--iron);
+    color:var(--chalk-dim);
+    margin-bottom:14px;
+  }
+  .day-tag.strength{border-color:var(--hazard); color:var(--hazard);}
+  .day-tag.mobility{border-color:var(--ok); color:var(--ok);}
+  .day-tag.rest{border-color:var(--danger); color:var(--danger);}
+
+  .block{
+    background:var(--concrete-2);
+    border:1px solid #3a3b3c;
+    border-radius:var(--radius);
+    margin-bottom:16px;
+    overflow:hidden;
+  }
+  .block-head{
+    padding:12px 16px;
+    border-bottom:1px solid #3a3b3c;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .block-head h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:20px;
+    letter-spacing:1px;
+  }
+  .block-head span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--chalk-dim);
+  }
+
+  .exercise{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    border-bottom:1px solid #333435;
+  }
+  .exercise:last-child{border-bottom:none;}
+  .exercise.done{opacity:0.4;}
+  .check{
+    width:22px; height:22px;
+    border:2px solid var(--iron);
+    border-radius:50%;
+    flex:0 0 auto;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .check.checked{
+    background:var(--hazard);
+    border-color:var(--hazard);
+  }
+  .check.checked::after{
+    content:"✓"; color:var(--concrete); font-size:13px; font-weight:700;
+  }
+  .ex-info{flex:1; min-width:0;}
+  .ex-name{font-size:15px; font-weight:500;}
+  .ex-detail{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--hazard);
+    margin-top:2px;
+  }
+  .demo-link{
+    flex:0 0 auto;
+    color:var(--chalk-dim);
+    text-decoration:none;
+    font-size:11px;
+    font-family:'JetBrains Mono', monospace;
+    border:1px solid var(--iron);
+    padding:5px 8px;
+    border-radius:var(--radius);
+    white-space:nowrap;
+  }
+  .demo-link:hover{color:var(--hazard); border-color:var(--hazard);}
+
+  .metcon-header{
+    background:linear-gradient(135deg, #33291a, var(--concrete-2));
+    padding:14px 16px;
+    border-bottom:1px solid #3a3b3c;
+  }
+  .metcon-header .kind{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--hazard);
+    font-size:11px;
+    letter-spacing:2px;
+  }
+  .metcon-header h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:22px;
+    margin-top:2px;
+  }
+
+  /* Timer */
+  .timer-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 16px;
+    background:var(--concrete-2);
+    border:1px solid #3a3b3c;
+    border-radius:var(--radius);
+    margin-bottom:16px;
+  }
+  .timer-circle{
+    width:180px; height:180px;
+    border-radius:50%;
+    border:6px solid var(--iron);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    position:relative;
+    transition:border-color .3s;
+  }
+  .timer-circle.work{border-color:var(--hazard);}
+  .timer-circle.rest{border-color:var(--ok);}
+  .timer-circle.go{border-color:var(--danger);}
+  .timer-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:40px;
+    font-weight:700;
+  }
+  .timer-label{
+    font-family:'Oswald', sans-serif;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--chalk-dim);
+    margin-top:4px;
+  }
+  .timer-controls{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+  }
+  .timer-controls button{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:1px;
+    padding:10px 18px;
+    background:none;
+    border:1px solid var(--iron);
+    color:var(--chalk);
+    cursor:pointer;
+    border-radius:var(--radius);
+  }
+  .timer-controls button.primary{
+    background:var(--hazard);
+    color:var(--concrete);
+    border-color:var(--hazard);
+  }
+  .timer-select{
+    display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; justify-content:center;
+  }
+  .timer-select button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    padding:6px 10px;
+    background:none;
+    border:1px solid var(--iron);
+    color:var(--chalk-dim);
+    cursor:pointer;
+  }
+  .timer-select button.active{color:var(--hazard); border-color:var(--hazard);}
+
+  .progress-bar{
+    height:4px;
+    background:var(--iron);
+    border-radius:2px;
+    margin-bottom:20px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--hazard);
+    transition:width .3s;
+  }
+  .progress-text{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--chalk-dim);
+    margin-bottom:8px;
+    letter-spacing:1px;
+  }
+
+  .creatine-note{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--chalk-dim);
+    padding:14px 16px;
+    border:1px dashed var(--iron);
+    margin-top:8px;
+  }
+  .creatine-note b{color:var(--hazard);}
+
+  footer{
+    text-align:center;
+    padding:20px;
+    color:var(--chalk-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:1px;
+  }
+
+  .mini-timer{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+  font-family:monospace;
+  font-size:12px;
+  color:#F2C230;
+}
+
+.mini-timer button{
+  background:none;
+  border:1px solid #555;
+  color:white;
+  font-size:10px;
+  padding:2px 6px;
+  cursor:pointer;
+}
+
+.mini-timer button:hover{
+  border-color:#F2C230;
+  color:#F2C230;
+}
+
+.timer-presets{
+  margin-top:4px;
+}
+</style>
+</head>
+
+<body>
+<div class="noise"></div>
+
+<header>
+  <div class="plate-num">WEEK 01 / BEGINNER BLOCK</div>
+  <h1>IRON PLATE</h1>
+  <div class="sub">Strength · Conditioning · Mobility</div>
+</header>
+
+<nav id="dayNav"></nav>
+<main id="main"></main>
+
+<footer>REST · HYDRATE · CONSISTENCY WINS</footer>
+
+<script src="app.js"></script>
+
+<script>
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+
+</body>
+</html>
